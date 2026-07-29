@@ -1,5 +1,6 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import {
+  DEFAULT_EMOJI,
   SAME_PLACE_RADIUS_M,
   type Category,
   type PlaceWithStats,
@@ -24,6 +25,7 @@ interface UserRow {
   id: string;
   nickname: string;
   report_count: number;
+  emoji: string | null;
 }
 
 /** supabase/schema.sql 스키마를 사용하는 실 구현 */
@@ -113,13 +115,18 @@ export class SupabaseDB implements ColdDB {
   async getOrCreateUser(tossUserKey: string): Promise<UserProfile> {
     const { data: found, error: findError } = await this.client
       .from('users')
-      .select('id, nickname, report_count')
+      .select('id, nickname, report_count, emoji')
       .eq('toss_user_key', tossUserKey)
       .maybeSingle();
     if (findError) throw findError;
     if (found) {
       const row = found as UserRow;
-      return { id: row.id, nickname: row.nickname, reportCount: row.report_count };
+      return {
+        id: row.id,
+        nickname: row.nickname,
+        emoji: row.emoji ?? DEFAULT_EMOJI,
+        reportCount: row.report_count,
+      };
     }
 
     const { count } = await this.client
@@ -129,18 +136,28 @@ export class SupabaseDB implements ColdDB {
 
     const { data: created, error: insertError } = await this.client
       .from('users')
-      .insert({ toss_user_key: tossUserKey, nickname })
-      .select('id, nickname, report_count')
+      .insert({ toss_user_key: tossUserKey, nickname, emoji: DEFAULT_EMOJI })
+      .select('id, nickname, report_count, emoji')
       .single();
     if (insertError) throw insertError;
     const row = created as UserRow;
-    return { id: row.id, nickname: row.nickname, reportCount: row.report_count };
+    return {
+      id: row.id,
+      nickname: row.nickname,
+      emoji: row.emoji ?? DEFAULT_EMOJI,
+      reportCount: row.report_count,
+    };
+  }
+
+  async setUserEmoji(userId: string, emoji: string): Promise<void> {
+    const { error } = await this.client.from('users').update({ emoji }).eq('id', userId);
+    if (error) throw error;
   }
 
   async getRanking(limit: number): Promise<RankingEntry[]> {
     const { data, error } = await this.client
       .from('users')
-      .select('id, nickname, report_count')
+      .select('id, nickname, report_count, emoji')
       .gt('report_count', 0)
       .order('report_count', { ascending: false })
       .limit(limit);
@@ -148,6 +165,7 @@ export class SupabaseDB implements ColdDB {
     return (data as UserRow[]).map((u, i) => ({
       userId: u.id,
       nickname: u.nickname,
+      emoji: u.emoji ?? DEFAULT_EMOJI,
       reportCount: u.report_count,
       rank: i + 1,
     }));
@@ -156,7 +174,7 @@ export class SupabaseDB implements ColdDB {
   async getMyRank(userId: string): Promise<RankingEntry | null> {
     const { data: me, error } = await this.client
       .from('users')
-      .select('id, nickname, report_count')
+      .select('id, nickname, report_count, emoji')
       .eq('id', userId)
       .maybeSingle();
     if (error) throw error;
@@ -171,6 +189,7 @@ export class SupabaseDB implements ColdDB {
     return {
       userId: row.id,
       nickname: row.nickname,
+      emoji: row.emoji ?? DEFAULT_EMOJI,
       reportCount: row.report_count,
       rank: (count ?? 0) + 1,
     };

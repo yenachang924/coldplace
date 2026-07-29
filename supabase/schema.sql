@@ -7,9 +7,13 @@ create table if not exists users (
   -- 토스 로그인 고유 ID 매핑 (getAnonymousKey 해시, 'toss:...' / 로컬 개발 'local:...')
   toss_user_key text not null unique,
   nickname text not null,
+  emoji text not null default '🐧',
   report_count int not null default 0,
   created_at timestamptz not null default now()
 );
+
+-- 기존 테이블에 emoji 컬럼이 없으면 추가 (재실행 안전)
+alter table users add column if not exists emoji text not null default '🐧';
 
 create table if not exists places (
   id uuid primary key default gen_random_uuid(),

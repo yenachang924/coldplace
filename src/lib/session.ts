@@ -18,6 +18,12 @@ function cacheUser(profile: UserProfile): void {
   localStorage.setItem(PROFILE_STORAGE, JSON.stringify(profile));
 }
 
+/** 캐시된 프로필의 얼굴 이모지를 갱신해요. */
+export function updateCachedEmoji(emoji: string): void {
+  const cached = getCachedUser();
+  if (cached) cacheUser({ ...cached, emoji });
+}
+
 /**
  * 로그인 보장. 이미 로그인돼 있으면 캐시된 프로필을,
  * 아니면 토스 로그인 → 유저 조회/생성 후 프로필을 반환해요.

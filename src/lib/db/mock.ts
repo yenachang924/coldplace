@@ -1,5 +1,6 @@
 import {
   DEFAULT_CENTER,
+  DEFAULT_EMOJI,
   SAME_PLACE_RADIUS_M,
   type Category,
   type PlaceWithStats,
@@ -34,6 +35,7 @@ interface MockUser {
   id: string;
   tossUserKey: string;
   nickname: string;
+  emoji?: string;
 }
 
 interface MockData {
@@ -52,9 +54,9 @@ function daysAgo(n: number): string {
 function seed(): MockData {
   const { lat, lng } = DEFAULT_CENTER;
   const users: MockUser[] = [
-    { id: 'seed-u1', tossUserKey: 'seed:1', nickname: '익명의 펭귄1' },
-    { id: 'seed-u2', tossUserKey: 'seed:2', nickname: '익명의 펭귄2' },
-    { id: 'seed-u3', tossUserKey: 'seed:3', nickname: '익명의 펭귄3' },
+    { id: 'seed-u1', tossUserKey: 'seed:1', nickname: '익명의 펭귄1', emoji: '🥶' },
+    { id: 'seed-u2', tossUserKey: 'seed:2', nickname: '익명의 펭귄2', emoji: '😎' },
+    { id: 'seed-u3', tossUserKey: 'seed:3', nickname: '익명의 펭귄3', emoji: '☃️' },
   ];
   const places: MockPlace[] = [
     { id: 'seed-p1', name: '인하대 정석학술정보관 로비', lat: lat + 0.0012, lng: lng + 0.0008, category: '건물·실내', createdBy: 'seed-u1', createdAt: daysAgo(6) },
@@ -121,7 +123,12 @@ function reportCountOf(data: MockData, userId: string): number {
 
 function rankingOf(data: MockData): RankingEntry[] {
   return data.users
-    .map((u) => ({ userId: u.id, nickname: u.nickname, reportCount: reportCountOf(data, u.id) }))
+    .map((u) => ({
+      userId: u.id,
+      nickname: u.nickname,
+      emoji: u.emoji ?? DEFAULT_EMOJI,
+      reportCount: reportCountOf(data, u.id),
+    }))
     .filter((e) => e.reportCount > 0)
     .sort((a, b) => b.reportCount - a.reportCount)
     .map((e, i) => ({ ...e, rank: i + 1 }));
@@ -179,11 +186,26 @@ export class MockDB implements ColdDB {
         id: crypto.randomUUID(),
         tossUserKey,
         nickname: `익명의 펭귄${data.users.length + 1}`,
+        emoji: DEFAULT_EMOJI,
       };
       data.users.push(user);
       save(data);
     }
-    return { id: user.id, nickname: user.nickname, reportCount: reportCountOf(data, user.id) };
+    return {
+      id: user.id,
+      nickname: user.nickname,
+      emoji: user.emoji ?? DEFAULT_EMOJI,
+      reportCount: reportCountOf(data, user.id),
+    };
+  }
+
+  async setUserEmoji(userId: string, emoji: string): Promise<void> {
+    const data = load();
+    const user = data.users.find((u) => u.id === userId);
+    if (user) {
+      user.emoji = emoji;
+      save(data);
+    }
   }
 
   async getRanking(limit: number): Promise<RankingEntry[]> {

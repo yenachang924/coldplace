@@ -21,7 +21,7 @@ function AppContent() {
       padding: '10px 0 14px',
       fontSize: 12,
       fontWeight: active ? 700 : 400,
-      color: active ? '#3182F6' : '#8B95A1',
+      color: active ? '#26428B' : '#8B95A1',
       cursor: 'pointer',
     }) as const;
 
@@ -33,7 +33,7 @@ function AppContent() {
         flexDirection: 'column',
         overflow: 'hidden',
         fontFamily:
-          "'Toss Product Sans', -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', sans-serif",
+          "'Toss Product Sans OTF', 'Toss Product Sans', -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', sans-serif",
       }}
     >
       <main style={{ flex: 1, overflow: 'hidden' }}>

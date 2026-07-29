@@ -28,6 +28,7 @@ export interface UserProfile {
   id: string;
   nickname: string;
   reportCount: number;
+  emoji?: string;
 }
 
 export interface RankingEntry {
@@ -35,7 +36,13 @@ export interface RankingEntry {
   nickname: string;
   reportCount: number;
   rank: number;
+  emoji?: string;
 }
+
+/** 프로필로 고를 수 있는 얼굴 이모지 */
+export const FACE_EMOJIS = ['🐧', '🥶', '😎', '😊', '🤗', '😇', '🤖', '👻', '🐻‍❄️', '😺', '🦊', '☃️'] as const;
+
+export const DEFAULT_EMOJI = '🐧';
 
 export interface SubmitReportInput {
   userId: string;
@@ -59,7 +66,7 @@ export const DEFAULT_CENTER: LatLng = { lat: 37.4501, lng: 126.6535 };
 export const SAME_PLACE_RADIUS_M = 30;
 
 export function pinColor(avgRating: number): string {
-  if (avgRating >= 4.0) return '#1B64DA';
-  if (avgRating >= 3.0) return '#3182F6';
-  return '#94C5FF';
+  if (avgRating >= 4.0) return '#16295E';
+  if (avgRating >= 3.0) return '#26428B';
+  return '#8FA3D9';
 }

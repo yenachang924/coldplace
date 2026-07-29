@@ -45,7 +45,7 @@ export function MapView(props: MapViewProps) {
   const wrapperStyle: CSSProperties = {
     position: 'relative',
     overflow: 'hidden',
-    background: '#E8F3FF',
+    background: '#E9EDF8',
     ...props.style,
   };
 

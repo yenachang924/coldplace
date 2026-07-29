@@ -138,7 +138,7 @@ export function MapScreen({ onReport, refreshKey }: MapScreenProps) {
           height: 56,
           borderRadius: '50%',
           border: 'none',
-          background: '#3182F6',
+          background: '#26428B',
           color: '#fff',
           fontSize: 26,
           boxShadow: '0 4px 12px rgba(49,130,246,0.4)',
@@ -182,7 +182,7 @@ export function MapScreen({ onReport, refreshKey }: MapScreenProps) {
               </div>
               <div style={{ textAlign: 'right' }}>
                 <Stars value={selected.avgRating} size={16} />
-                <div style={{ fontSize: 13, fontWeight: 700, color: '#3182F6' }}>
+                <div style={{ fontSize: 13, fontWeight: 700, color: '#26428B' }}>
                   {selected.avgRating.toFixed(1)}
                 </div>
               </div>

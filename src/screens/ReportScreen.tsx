@@ -134,9 +134,9 @@ export function ReportScreen({ initialCenter, onDone, onBack }: ReportScreenProp
                 type="button"
                 onClick={() => setCategory(c)}
                 style={{
-                  border: category === c ? '1.5px solid #3182F6' : '1px solid #E5E8EB',
-                  background: category === c ? '#E8F3FF' : '#fff',
-                  color: category === c ? '#3182F6' : '#4E5968',
+                  border: category === c ? '1.5px solid #26428B' : '1px solid #E5E8EB',
+                  background: category === c ? '#E9EDF8' : '#fff',
+                  color: category === c ? '#26428B' : '#4E5968',
                   fontWeight: category === c ? 700 : 400,
                   borderRadius: 18,
                   padding: '8px 14px',
@@ -190,7 +190,7 @@ export function ReportScreen({ initialCenter, onDone, onBack }: ReportScreenProp
             fontSize: 16,
             fontWeight: 700,
             color: '#fff',
-            background: valid && !submitting ? '#3182F6' : '#B0B8C1',
+            background: valid && !submitting ? '#26428B' : '#B0B8C1',
             cursor: valid && !submitting ? 'pointer' : 'default',
           }}
         >

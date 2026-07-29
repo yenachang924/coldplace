@@ -19,6 +19,8 @@ export interface ColdDB {
   getRanking(limit: number): Promise<RankingEntry[]>;
   /** 내 순위 (제보가 없으면 null) */
   getMyRank(userId: string): Promise<RankingEntry | null>;
+  /** 프로필 얼굴 이모지 변경 */
+  setUserEmoji(userId: string, emoji: string): Promise<void>;
 }
 
 const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
