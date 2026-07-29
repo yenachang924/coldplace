@@ -1,0 +1,9 @@
+{
+  "appName": "coldplace",
+  "permissions": [
+    {
+      "name": "geolocation",
+      "access": "access"
+    }
+  ]
+}
