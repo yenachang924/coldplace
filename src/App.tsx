@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { TDSMobileProvider, useToast } from '@toss/tds-mobile';
 import { DEFAULT_CENTER, type LatLng } from './types';
+import { COLORS } from './theme';
 import { MapScreen } from './screens/MapScreen';
 import { ReportScreen } from './screens/ReportScreen';
 import { RankingScreen } from './screens/RankingScreen';
@@ -21,7 +22,7 @@ function AppContent() {
       padding: '10px 0 14px',
       fontSize: 12,
       fontWeight: active ? 700 : 400,
-      color: active ? '#26428B' : '#8B95A1',
+      color: active ? COLORS.primary : '#8B95A1',
       cursor: 'pointer',
     }) as const;
 

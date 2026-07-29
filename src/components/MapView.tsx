@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import type { LatLng } from '../types';
+import { COLORS } from '../theme';
 import { loadKakaoMaps } from '../lib/kakao';
 
 export interface MapPin {
@@ -45,7 +46,7 @@ export function MapView(props: MapViewProps) {
   const wrapperStyle: CSSProperties = {
     position: 'relative',
     overflow: 'hidden',
-    background: '#E9EDF8',
+    background: COLORS.primaryBg,
     ...props.style,
   };
 

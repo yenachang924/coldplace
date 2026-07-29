@@ -1,10 +1,21 @@
 import { useEffect, useMemo, useState } from 'react';
 import type { LatLng, PlaceWithStats } from '../types';
 import { pinColor } from '../types';
+import { COLORS } from '../theme';
 import { getDB, hotPlaces } from '../lib/db';
 import { getMyLocation } from '../lib/appBridge';
 import { MapView, type MapPin } from '../components/MapView';
 import { Stars } from '../components/Stars';
+import sheltersData from '../data/shelters.json';
+
+interface Shelter {
+  name: string;
+  lat: number;
+  lng: number;
+}
+
+const SHELTERS: Shelter[] = sheltersData.shelters;
+const SHELTER_PREFIX = 'shelter:';
 
 interface MapScreenProps {
   onReport: (center: LatLng) => void;
@@ -19,6 +30,8 @@ export function MapScreen({ onReport, refreshKey }: MapScreenProps) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [focus, setFocus] = useState<LatLng | null>(null);
   const [mapCenter, setMapCenter] = useState<LatLng | null>(null);
+  const [showShelters, setShowShelters] = useState(true);
+  const [selectedShelter, setSelectedShelter] = useState<Shelter | null>(null);
 
   useEffect(() => {
     getMyLocation().then(({ position, granted }) => {
@@ -32,17 +45,25 @@ export function MapScreen({ onReport, refreshKey }: MapScreenProps) {
     getDB().listPlaces().then(setPlaces);
   }, [refreshKey]);
 
-  const pins: MapPin[] = useMemo(
-    () =>
-      places.map((p) => ({
-        id: p.id,
-        lat: p.lat,
-        lng: p.lng,
-        color: pinColor(p.avgRating),
-        label: p.name,
-      })),
-    [places],
-  );
+  const pins: MapPin[] = useMemo(() => {
+    const placePins = places.map((p) => ({
+      id: p.id,
+      lat: p.lat,
+      lng: p.lng,
+      color: pinColor(p.avgRating),
+      label: p.name,
+    }));
+    if (!showShelters) return placePins;
+    // 공공 무더위쉼터는 회색 보조 핀으로 먼저 깔아서, 유저 제보 핀이 위에 오도록 해요.
+    const shelterPins = SHELTERS.map((s, i) => ({
+      id: `${SHELTER_PREFIX}${i}`,
+      lat: s.lat,
+      lng: s.lng,
+      color: COLORS.shelter,
+      label: s.name,
+    }));
+    return [...shelterPins, ...placePins];
+  }, [places, showShelters]);
 
   const hot = useMemo(() => hotPlaces(places), [places]);
   const selected = places.find((p) => p.id === selectedId) ?? null;
@@ -61,7 +82,15 @@ export function MapScreen({ onReport, refreshKey }: MapScreenProps) {
         center={center}
         pins={pins}
         focus={focus}
-        onPinTap={(id) => setSelectedId(id)}
+        onPinTap={(id) => {
+          if (id.startsWith(SHELTER_PREFIX)) {
+            setSelectedShelter(SHELTERS[Number(id.slice(SHELTER_PREFIX.length))] ?? null);
+            setSelectedId(null);
+          } else {
+            setSelectedId(id);
+            setSelectedShelter(null);
+          }
+        }}
         onCenterChanged={setMapCenter}
         style={{ width: '100%', height: '100%' }}
       />
@@ -126,28 +155,87 @@ export function MapScreen({ onReport, refreshKey }: MapScreenProps) {
         </div>
       )}
 
+      {/* 무더위쉼터 레이어 토글 */}
+      <button
+        onClick={() => {
+          setShowShelters((v) => !v);
+          setSelectedShelter(null);
+        }}
+        style={{
+          position: 'absolute',
+          left: 16,
+          bottom: 24,
+          zIndex: 50,
+          border: 'none',
+          borderRadius: 20,
+          padding: '10px 14px',
+          background: showShelters ? COLORS.primary : '#fff',
+          color: showShelters ? '#fff' : '#4E5968',
+          fontSize: 13,
+          fontWeight: 600,
+          boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+          cursor: 'pointer',
+        }}
+      >
+        ⛱️ 공공 쉼터 {SHELTERS.length}
+      </button>
+
       {/* 제보 플로팅 버튼 */}
       <button
         onClick={() => onReport(mapCenter ?? center)}
         style={{
           position: 'absolute',
           right: 16,
-          bottom: selected ? 300 : 24,
+          bottom: selected ? 300 : selectedShelter ? 180 : 24,
           zIndex: 50,
           width: 56,
           height: 56,
           borderRadius: '50%',
           border: 'none',
-          background: '#26428B',
+          background: COLORS.primary,
           color: '#fff',
           fontSize: 26,
-          boxShadow: '0 4px 12px rgba(49,130,246,0.4)',
+          boxShadow: '0 4px 12px rgba(38,66,139,0.4)',
           cursor: 'pointer',
         }}
         aria-label="제보하기"
       >
         ＋
       </button>
+
+      {/* 무더위쉼터 바텀시트 */}
+      {selectedShelter && (
+        <>
+          <div
+            onClick={() => setSelectedShelter(null)}
+            style={{ position: 'absolute', inset: 0, zIndex: 60 }}
+          />
+          <div
+            style={{
+              position: 'absolute',
+              left: 0,
+              right: 0,
+              bottom: 0,
+              zIndex: 70,
+              background: '#fff',
+              borderRadius: '20px 20px 0 0',
+              boxShadow: '0 -4px 20px rgba(0,0,0,0.15)',
+              padding: '20px 20px 28px',
+            }}
+          >
+            <div style={{ fontSize: 18, fontWeight: 700, color: '#191F28' }}>
+              {selectedShelter.name}
+            </div>
+            <div style={{ fontSize: 12, color: '#8B95A1', marginTop: 2 }}>
+              행정안전부 지정 무더위쉼터
+            </div>
+            <div style={{ fontSize: 14, color: '#333D4B', marginTop: 12 }}>
+              누구나 무료로 이용할 수 있는 공공 냉방 쉼터예요. 다녀오셨다면 ＋버튼으로 시원함
+              별점을 남겨 이웃에게 알려주세요!
+            </div>
+          </div>
+        </>
+      )}
 
       {/* 핀 상세 바텀시트 */}
       {selected && (
@@ -182,7 +270,7 @@ export function MapScreen({ onReport, refreshKey }: MapScreenProps) {
               </div>
               <div style={{ textAlign: 'right' }}>
                 <Stars value={selected.avgRating} size={16} />
-                <div style={{ fontSize: 13, fontWeight: 700, color: '#26428B' }}>
+                <div style={{ fontSize: 13, fontWeight: 700, color: COLORS.primary }}>
                   {selected.avgRating.toFixed(1)}
                 </div>
               </div>

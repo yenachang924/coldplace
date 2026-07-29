@@ -1,3 +1,5 @@
+import { COLORS } from './theme';
+
 export interface LatLng {
   lat: number;
   lng: number;
@@ -66,7 +68,7 @@ export const DEFAULT_CENTER: LatLng = { lat: 37.4501, lng: 126.6535 };
 export const SAME_PLACE_RADIUS_M = 30;
 
 export function pinColor(avgRating: number): string {
-  if (avgRating >= 4.0) return '#16295E';
-  if (avgRating >= 3.0) return '#26428B';
-  return '#8FA3D9';
+  if (avgRating >= 4.0) return COLORS.primaryDark;
+  if (avgRating >= 3.0) return COLORS.primary;
+  return COLORS.primaryWeak;
 }

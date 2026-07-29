@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { DEFAULT_EMOJI, FACE_EMOJIS, type RankingEntry, type UserProfile } from '../types';
+import { COLORS } from '../theme';
 import { getDB } from '../lib/db';
 import { ensureLogin, getCachedUser, updateCachedEmoji } from '../lib/session';
 
@@ -83,7 +84,7 @@ export function RankingScreen({ refreshKey }: RankingScreenProps) {
           position: 'sticky',
           top: 0,
           zIndex: 10,
-          background: '#E9EDF8',
+          background: COLORS.primaryBg,
           margin: '12px 16px',
           borderRadius: 14,
           overflow: 'hidden',
@@ -91,14 +92,14 @@ export function RankingScreen({ refreshKey }: RankingScreenProps) {
       >
         {user ? (
           <div style={rowStyle}>
-            <span style={{ fontSize: 15, fontWeight: 700, color: '#26428B', width: 36 }}>
+            <span style={{ fontSize: 15, fontWeight: 700, color: COLORS.primary, width: 36 }}>
               {myRank ? `${myRank.rank}위` : '-'}
             </span>
             <button
               onClick={() => setPickerOpen((v) => !v)}
               aria-label="얼굴 이모지 바꾸기"
               style={{
-                border: '1.5px dashed #26428B',
+                border: `1.5px dashed ${COLORS.primary}`,
                 borderRadius: '50%',
                 width: 40,
                 height: 40,
@@ -121,7 +122,7 @@ export function RankingScreen({ refreshKey }: RankingScreenProps) {
                         marginLeft: 6,
                         fontSize: 11,
                         fontWeight: 600,
-                        color: '#26428B',
+                        color: COLORS.primary,
                         background: '#fff',
                         borderRadius: 6,
                         padding: '2px 6px',
@@ -147,7 +148,7 @@ export function RankingScreen({ refreshKey }: RankingScreenProps) {
               style={{
                 border: 'none',
                 borderRadius: 10,
-                background: '#26428B',
+                background: COLORS.primary,
                 color: '#fff',
                 fontSize: 13,
                 fontWeight: 700,
@@ -176,7 +177,7 @@ export function RankingScreen({ refreshKey }: RankingScreenProps) {
                       height: 40,
                       fontSize: 20,
                       borderRadius: '50%',
-                      border: selected ? '2px solid #26428B' : '1px solid #E5E8EB',
+                      border: selected ? `2px solid ${COLORS.primary}` : '1px solid #E5E8EB',
                       background: selected ? '#fff' : '#FAFBFC',
                       cursor: 'pointer',
                     }}
@@ -204,7 +205,7 @@ export function RankingScreen({ refreshKey }: RankingScreenProps) {
               key={entry.userId}
               style={{
                 ...rowStyle,
-                background: isMe ? '#F4F6FB' : 'transparent',
+                background: isMe ? COLORS.primaryBgFaint : 'transparent',
                 borderBottom: '1px solid #F2F4F6',
               }}
             >
@@ -213,7 +214,7 @@ export function RankingScreen({ refreshKey }: RankingScreenProps) {
                   fontSize: 15,
                   fontWeight: 700,
                   width: 36,
-                  color: entry.rank <= 3 ? '#26428B' : '#8B95A1',
+                  color: entry.rank <= 3 ? COLORS.primary : '#8B95A1',
                 }}
               >
                 {entry.rank <= 3 ? ['🥇', '🥈', '🥉'][entry.rank - 1] : `${entry.rank}위`}
@@ -233,8 +234,8 @@ export function RankingScreen({ refreshKey }: RankingScreenProps) {
                       marginLeft: 6,
                       fontSize: 11,
                       fontWeight: 600,
-                      color: '#26428B',
-                      background: '#E9EDF8',
+                      color: COLORS.primary,
+                      background: COLORS.primaryBg,
                       borderRadius: 6,
                       padding: '2px 6px',
                     }}

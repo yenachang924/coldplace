@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { CATEGORIES, type Category, type LatLng } from '../types';
+import { COLORS } from '../theme';
 import { getDB } from '../lib/db';
 import { ensureLogin } from '../lib/session';
 import { MapView } from '../components/MapView';
@@ -134,9 +135,9 @@ export function ReportScreen({ initialCenter, onDone, onBack }: ReportScreenProp
                 type="button"
                 onClick={() => setCategory(c)}
                 style={{
-                  border: category === c ? '1.5px solid #26428B' : '1px solid #E5E8EB',
-                  background: category === c ? '#E9EDF8' : '#fff',
-                  color: category === c ? '#26428B' : '#4E5968',
+                  border: category === c ? `1.5px solid ${COLORS.primary}` : '1px solid #E5E8EB',
+                  background: category === c ? COLORS.primaryBg : '#fff',
+                  color: category === c ? COLORS.primary : '#4E5968',
                   fontWeight: category === c ? 700 : 400,
                   borderRadius: 18,
                   padding: '8px 14px',
@@ -175,7 +176,7 @@ export function ReportScreen({ initialCenter, onDone, onBack }: ReportScreenProp
         </div>
 
         {error && (
-          <div style={{ marginTop: 16, fontSize: 13, color: '#F04452' }}>{error}</div>
+          <div style={{ marginTop: 16, fontSize: 13, color: COLORS.danger }}>{error}</div>
         )}
 
         <button
@@ -190,7 +191,7 @@ export function ReportScreen({ initialCenter, onDone, onBack }: ReportScreenProp
             fontSize: 16,
             fontWeight: 700,
             color: '#fff',
-            background: valid && !submitting ? '#26428B' : '#B0B8C1',
+            background: valid && !submitting ? COLORS.primary : COLORS.disabled,
             cursor: valid && !submitting ? 'pointer' : 'default',
           }}
         >

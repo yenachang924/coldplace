@@ -1,3 +1,5 @@
+import { COLORS } from '../theme';
+
 interface StarsProps {
   value: number;
   size?: number;
@@ -8,8 +10,8 @@ export function Stars({ value, size = 14 }: StarsProps) {
   const full = Math.round(value);
   return (
     <span style={{ fontSize: size, letterSpacing: 1 }} aria-label={`별점 ${value}점`}>
-      <span style={{ color: '#FFB331' }}>{'★'.repeat(full)}</span>
-      <span style={{ color: '#D1D6DB' }}>{'★'.repeat(5 - full)}</span>
+      <span style={{ color: COLORS.star }}>{'★'.repeat(full)}</span>
+      <span style={{ color: COLORS.starOff }}>{'★'.repeat(5 - full)}</span>
     </span>
   );
 }
@@ -36,7 +38,7 @@ export function StarInput({ value, onChange }: StarInputProps) {
             fontSize: 32,
             lineHeight: 1,
             cursor: 'pointer',
-            color: n <= value ? '#FFB331' : '#D1D6DB',
+            color: n <= value ? COLORS.star : COLORS.starOff,
           }}
         >
           ★

@@ -50,6 +50,28 @@ npm run build  # ait build — vite build 후 coldplace.ait 아티팩트 생성
 | `VITE_KAKAO_MAP_KEY` | 카카오맵 JavaScript 키. 콘솔에 `localhost:5173` + 배포 도메인 등록 필요 |
 | `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY` | Supabase 프로젝트. `supabase/schema.sql`을 SQL Editor에서 실행 후 사용 |
 
+## UX/UI 커스터마이징 (테마)
+
+색은 전부 `src/theme.ts` 한 파일의 토큰으로 모여 있어요. `COLORS.primary`(군청) 등 값만 바꾸면
+탭·버튼·핀·배지·배경이 한 번에 바뀌어요. `npm run dev` 상태에서 저장하면 HMR로 즉시 반영돼요.
+폰트는 `index.html`에서 토스 공식 CDN(Toss Product Sans + Toss Face 이모지)을 로드해요.
+
+## 무더위쉼터 데이터 교체
+
+지도에 기본으로 깔리는 ⛱️ 공공 쉼터 핀은 `src/data/shelters.json`에서 읽어요 (현재는 예시 발췌
+25곳, 좌표 근사값). 전국 데이터로 바꾸려면:
+
+1. [공공데이터포털](https://www.data.go.kr)에서 행정안전부 "무더위쉼터" CSV 다운로드
+2. `node scripts/shelters-from-csv.mjs 무더위쉼터.csv` 실행 → `src/data/shelters.json` 교체
+3. `npm run build`
+
+## 챌린지 제출 (.ait)
+
+1. [앱인토스 콘솔](https://developers.apps-in-toss.im)에서 미니앱 등록 — `granite.config.ts`의
+   `appName: "coldplace"`, 한글 이름 "콜드플레이스"와 동일하게
+2. `npm run build` → 프로젝트 루트에 `coldplace.ait` 생성 (실제 구동 파일)
+3. 콘솔에 `.ait` 업로드 후 샌드박스 테스트 → 출품 폼에는 콘솔에 등록한 appName 그대로 기입
+
 ## 구조
 
 ```
